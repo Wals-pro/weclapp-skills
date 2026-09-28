@@ -1,25 +1,24 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "weclapp-skills",
-  "description": "Wals.pro weclapp skills for Claude — proven weclapp ERP workflows as installable, auto-updating Agent Skills.",
+  "description": "wals.pro weclapp skills for Claude — proven weclapp ERP workflows as installable, auto-updating Agent Skills.",
   "metadata": {
-    "description": "Wals.pro weclapp skills for Claude — proven weclapp ERP workflows as installable, auto-updating Agent Skills."
+    "description": "wals.pro weclapp skills for Claude — proven weclapp ERP workflows as installable, auto-updating Agent Skills."
   },
   "owner": {
-    "name": "Wals.pro",
+    "name": "wals.pro",
     "email": "support@wals.pro"
   },
   "plugins": [
     {
       "name": "weclapp",
       "source": "./plugins/weclapp",
-      "description": "weclapp ERP workflows for your AI assistant — installable, auto-updating Agent Skills covering sales, fulfillment, procurement, master data, service tickets, and more. Pairs with the weclapp MCP connection.",
-      "version": "0.4.0",
+      "description": "weclapp ERP workflows for your AI assistant — installable, auto-updating Agent Skills covering sales, fulfillment, procurement, master data, service tickets, and more. Pairs with the wals.pro AI MCP connection.",
       "author": {
-        "name": "Wals.pro",
+        "name": "wals.pro",
         "email": "support@wals.pro"
       },
-      "homepage": "https://weclapp-ai.wals.pro",
+      "homepage": "https://ai.wals.pro",
       "category": "productivity"
     }
   ]

@@ -1,0 +1,20 @@
+{
+  "name": "weclapp-skills",
+  "interface": {
+    "displayName": "wals.pro weclapp Skills"
+  },
+  "plugins": [
+    {
+      "name": "weclapp",
+      "source": {
+        "source": "local",
+        "path": "./plugins/weclapp"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

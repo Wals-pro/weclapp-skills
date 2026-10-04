@@ -1,7 +1,7 @@
 ---
 name: weclapp-get-started
-description: "Use when connecting an AI assistant to weclapp via the wals.pro AI MCP server for the first time, when checking what the connection can do, or when diagnosing missing tools, permission errors, plan limits, or connection problems. Covers setup verification, a first successful read, troubleshooting, and safe escalation to support. Triggers include Verbindung einrichten, verbinden, funktioniert nicht, Werkzeug fehlt, keine Berechtigung, Tariflimit, Support kontaktieren. Not for understanding entities, fields, or payloads (research)."
-version: 0.3.2
+description: "Use when connecting an AI assistant to weclapp via the wals.pro AI MCP server for the first time, when checking what the connection can do, or when diagnosing missing tools, permission errors, plan limits, or connection problems. Covers setup verification, a first successful read, troubleshooting, and safe escalation to support. Triggers include Verbindung einrichten, verbinden, Live- oder Demosystem, funktioniert nicht, Werkzeug fehlt, keine Berechtigung, Tariflimit, Support kontaktieren. Not for understanding entities, fields, or payloads (research)."
+version: 0.4.0
 ---
 
 # Get started with weclapp
@@ -17,9 +17,18 @@ Help the user verify their wals.pro AI connection to weclapp, understand what it
 
 ### Which weclapp system am I in?
 
-There are two kinds of connection URL. A **universal** URL (`/v1/mcp`) asks which weclapp system to use when you sign in, so one connection means one system per chat. A **system** URL (`/v1/tenants/<slug>/mcp`) carries the system in the address, so several connections can stay open side by side, each fixed to its own system — this one is available only to workspaces whose plan or operator grant includes it, and it does not support file upload.
+The assistant always works in exactly the system its connection is bound to. Every customer plan has a **Live** system and can add a **Demo** system with its own weclapp URL, API key and bounded test quota. Each is added as its own connection, using exactly the URL shown under Connections in the dashboard; clients that support several MCP connections may use both side by side.
 
-Whenever more than one connection could be in play — production and test, two companies — call `get_acting_identity` and read `connection.tenant_slug` before writing anything. Do not infer the system from the conversation.
+- `get_acting_identity` shows which system the current connection uses — Live or Demo, company and host. Whenever more than one connection could be in play, check it before writing anything; never infer the system from the conversation.
+- A preview is valid only in the system where it was created. Never carry a preview, approval or upload from one system to the other — create it again in the target system.
+- When an admin points a system at a different weclapp target in Setup, earlier consents, previews, uploads and personal keys for that system no longer apply: reconnect and start with fresh previews. A key rotation at the same weclapp target needs no fresh consent.
+- If a connection fails, never silently switch to a different URL or system.
+
+## How the connection works
+
+- **Reading** runs through a few generic readers — searching, reading one record, aggregating, schema and reference data — rather than one tool per entity.
+- **Writing** is always preview → the user's explicit approval → `execute_approved`. Specialised jobs (prices, bookings, shipments, cancellations and the like) are routes and actions of the existing preview tools, not separate tools: `get_entity_action_catalog` lists the actions of a record, and `get_schema(…, detail="payload_guide")` the payload routes. Look them up when needed instead of listing them from memory.
+- **Feedback and wishes** go through `preview_escalate_to_support` (see below).
 
 Never promise a capability before checking it. If a tool the user asks about is not available, explain why (role, plan, policy, or the weclapp API key's own permissions) instead of guessing.
 
@@ -60,7 +69,7 @@ State clearly which layer is the cause and what the user can do. Do not retry re
 
 The same channel carries two things: problems you cannot explain with the layers above, and feedback. Offer it in both cases:
 
-1. `preview_escalate_to_support` with a neutral, factual summary. Pick the category deliberately — `bug` for a defect, `feature_gap` for a missing capability or a wish.
+1. `preview_escalate_to_support` with a neutral, factual summary. Pick the category deliberately — `bug` for a defect, `feature_gap` for a missing capability or a wish. For support tickets, propose `problem_scope` (`platform`, `customer_erp`, `unclear`) and `support_target` (`platform`, `partner`) when known. Use only the server-verified destination in the preview; never invent a partner address, mapping or route. Platform problems go to platform support. If partner delivery is not ready, explain the result and let the user select an available destination.
 2. Show the preview to the user, including the central wals.pro support destination, and wait for their explicit approval.
 3. `execute_approved` with the preview's `approval.token` as `approval_token` and its `execution.payload` as `payload`.
 

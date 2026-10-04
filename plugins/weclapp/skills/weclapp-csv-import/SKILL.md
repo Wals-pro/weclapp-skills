@@ -1,7 +1,7 @@
 ---
 name: weclapp-csv-import
-description: "Use for building weclapp CSV import files — Massenimport / Datenübernahme of articles, customers, suppliers, contacts, prices and 30+ other data types via the Import/Export-Wizard. Covers template column specs, file format rules, import order, and pre-upload validation. Not for single-record changes through the API (master-data skill) and not for auditing existing records (data-quality skill)."
-version: 0.2.5
+description: "Use for building weclapp CSV import files — Massenimport / Datenübernahme of articles, customers, suppliers, contacts, prices and 30+ other data types via the Import/Export-Wizard. Covers template column specs, file format rules, import order, and pre-upload validation. Not for single-record changes or price lists applied directly by the assistant (master-data skill) and not for auditing existing records (data-quality skill)."
+version: 0.2.7
 ---
 
 # Build weclapp CSV import files
@@ -26,3 +26,7 @@ weclapp's Import/Export-Wizard is the bulk data channel: articles, customers, su
 ## Scope
 
 Bulk file-based imports through the Import/Export-Wizard. Creating or updating single records through the API belongs to the master-data and record-updates skills; auditing existing data quality belongs to the data-quality skill.
+
+## Price lists applied by the assistant
+
+When the user wants a price list or price file applied directly through the assistant instead of uploading a wizard file, hand off to the price section of the master-data skill: it applies the rows with preview and approval, record by record, and reports each outcome. Building the wizard file stays here.

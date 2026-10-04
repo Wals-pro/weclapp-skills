@@ -24,7 +24,7 @@ codex plugin add weclapp@weclapp-skills
 
 A workspace admin opens **Workspace settings → Plugins → Add → Import marketplace**, enters this repository's URL as Source (leave Path empty) and sets the installation policy. ChatGPT syncs the marketplace daily; **Sync now** pulls updates immediately.
 
-Ships one plugin, **weclapp**, bundling 18 skills (version 0.6.6).
+Ships one plugin, **weclapp**, bundling 18 skills (version 0.6.11).
 
 The skills drive the wals.pro AI MCP server at `https://mcp.ai.wals.pro/v1/mcp`. Add that connection first (Claude: Connectors Directory or Customize → Connectors; Codex and ChatGPT: MCP settings), sign in and pick your weclapp tenant, then install this plugin.
 

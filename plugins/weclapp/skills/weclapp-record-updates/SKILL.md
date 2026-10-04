@@ -1,7 +1,7 @@
 ---
 name: weclapp-record-updates
 description: "Use when changing a single weclapp record that no specialized skill covers — updating fields on customers, suppliers, leads, opportunities, orders, invoices, mail templates, articles, tasks, or other writable entities, or triggering a workflow action on a record. The generic, safe edit path with preview and approval. Triggers include Feld ändern, Datensatz aktualisieren, Status setzen, Aktion auslösen. Not when a specialized skill owns the job (sales, fulfillment, procurement, master data, tickets, contracts)."
-version: 0.3.6
+version: 0.3.7
 ---
 
 # Update weclapp records safely
@@ -39,6 +39,8 @@ For date fields on any record (quotation dates, due dates, delivery dates), send
 Position readback treats equivalent decimal spellings as equal for declared price, quantity and discount fields. An actual value difference or an unproven write still stops the workflow: inspect the independent readback and do not repeat the write blindly.
 
 **One exception, and it destroys data if you bypass the guarded path:** nested item arrays (`quotationItems`, `orderItems`, `salesInvoiceItems`, `purchaseOrderItems`, `purchaseInvoiceItems`, `productionOrderItems`, and an article's `productionBillOfMaterialItems`) are **full replacement lists** in weclapp, not patches. Always submit them through `preview_write_entity` → `execute_approved` on the existing record. The preview detects the array automatically, preserves unmentioned positions with `{id, version}` stubs, dry-runs the complete target and approval-binds the live item state. Deletion is impossible unless `allow_item_removal=true`; with that explicit consent the submitted array becomes the complete remaining set. Do not call the raw API for these updates.
+
+**Positions whose article is a sales bill of material (Verkaufsstückliste)** get their component positions from weclapp automatically: send only the parent position, never the components. The preview announces how many component positions weclapp will add, and the result reports them separately as `child_position_count`. Components follow their parent — they scale with its quantity and disappear with it — and cannot be edited on their own. If a position write ever comes back as unproven, never send the position again: a repeat creates the parent and all its components a second time. Read the document back instead.
 
 Batches use the same path with `payload={"items": [...]}`: for `entity="task"` it previews a batch of creates; for `entity="article"` (no `entity_id`) it previews 1–25 article **updates** — each item carries the article `id` plus only the changed fields — under ONE token, and ONE `execute_approved` writes them all. For a batch, skip step 2 of the workflow above: find all articles with **one** `search_entities` call that passes their numbers as a list (`view_options={"article_number": [...]}`), then preview the batch directly — the preview reads every current version itself and shows before/after per article, so a `get_entity` per record only costs calls. The article batch never creates or rolls back: if a later article fails, report the returned per-article `steps_completed` and do not re-run the batch blindly.
 

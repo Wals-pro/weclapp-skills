@@ -1,7 +1,7 @@
 ---
 name: weclapp-sales-operations
 description: "Use for the weclapp sales process end to end — creating or updating customers, leads, CRM activities and campaigns, building quotations (Angebote), accepting them into sales orders, generating sales invoices from quotations or orders, finalizing and booking them after the user's review, and producing document PDFs. The complete lead-to-invoice workflow with preview and approval on every write. Triggers include Angebot schreiben, Angebot annehmen, Auftrag anlegen, Rechnung erstellen, Rechnung buchen, Lead, Kampagne. Not for recurring contract billing (contract-management) or shipping the order (fulfillment)."
-version: 0.3.3
+version: 0.3.5
 ---
 
 # Run the weclapp sales process
@@ -53,6 +53,10 @@ a flag toggle shows up too. Show it to the user, then pass the preview's
 Deleting positions is a separate decision: set `allow_item_removal=true`, which
 makes the array the complete remaining set. The preview then lists every position
 that would be dropped — show that list before asking for approval.
+
+A position whose article is a Verkaufsstückliste brings its component positions
+along: weclapp creates them under the parent, so add or keep only the parent
+position — in removal mode its components stay with it or go with it.
 
 Only an open quotation that is the active version of its chain can be revised.
 Position changes cannot be combined with header changes or with recipient
@@ -109,6 +113,7 @@ it rejects PERSON contacts and does not fill the printed name or delivery e-mail
 - **Accept a quotation:** `preview_entity_action(entity="quotation", action="accept", entity_id=...)` → approval → `execute_approved`. This creates the follow-on document the quotation type names, normally a sales order: report `created_sales_order_number` from the result. If `readback.status` is not `found` (none, several, lookup failed, other document type), tell the user what `readback.note` says and never create a sales order manually before checking for an existing one. For an `OPEN` quotation the preview may disclose `entry_completion`: on weclapp's new status flow the approval also completes the entry (header and positions then lock). Show that to the user before approving.
 - **Invoice from a quotation:** `preview_entity_action(entity="quotation", action="createSalesInvoice", entity_id=...)` → approval → `execute_approved`. Optional header overrides go in `payload={"overrides": {...}}`.
 - **Invoice from a sales order:** the same call with `entity="salesOrder"`. Follow-on documents generally require the source document to be in a confirmed state — if the preview reports a state problem, resolve that first instead of forcing it.
+- **Prepayment (Vorkasse) orders** get their final invoice from `preview_entity_action(entity="salesOrder", action="createPrepaymentFinalInvoice", entity_id=...)`, not from `createSalesInvoice` (weclapp refuses it; the preview says so). The same header overrides, e.g. `shippingDate` as the Leistungsdatum, go in `payload={"overrides": {...}}`. If the result reports the invoice as created but its header update as unconfirmed, check the invoice in weclapp and never run the action again.
 - **Stop after creating an invoice.** A new invoice is a draft (`NEW`, preliminary number) — the pro forma. Never finalize or book it in the same step: tell the user to review the draft in weclapp (positions, prices, taxes, customer, dates) and wait for their confirmation.
 - **Finalize or book only after the review:** `preview_write_entity` on the invoice with a status-only payload — `DOCUMENT_CREATED` creates the document and the final number, `OPEN_ITEM_CREATED` additionally books the open item. Show the preview's effects to the user; afterwards the invoice can no longer be deleted, only cancelled. If the preview reports active invoice mail rules, the invoice will be emailed — ask the user explicitly before repeating the preview with their consent.
 

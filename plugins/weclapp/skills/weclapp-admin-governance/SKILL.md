@@ -1,7 +1,7 @@
 ---
 name: weclapp-admin-governance
 description: "Use for administering the wals.pro AI workspace itself — authoring and maintaining tenant workflow rules (SOPs) that steer how the assistant works, reviewing permissions, and answering governance questions from the activity history. Admin-level configuration, not business data. Triggers include Hausregeln, SOP anlegen, Arbeitsanweisung, Berechtigungen prüfen, wer hat was geändert. Not for business rules research without changing them (research) or connection problems (get-started)."
-version: 0.3.4
+version: 0.3.5
 ---
 
 # Govern the AI workspace
@@ -24,7 +24,7 @@ SOPs steer the assistant but never weaken safety: no SOP can remove previews, ap
 ## Lifecycle
 
 1. **Read before writing:** `read_settings(domain_key="sops")` — extend or correct an existing rule instead of adding a near-duplicate that will conflict later. Narrow it like any settings domain with `filters=[{"field": "target_entity" | "operation" | "workflow_scope", "value": …}]` (only `eq`).
-2. **Create/update:** `preview_write_entity(entity="sop", payload={...})` — pass the existing rule id as `entity_id` to update, omit it to create (fields: `get_schema(entity="sop", detail="payload_guide")`; formerly `preview_write_sop`) → show the exact rule text and scope → approval → `execute_approved` with the preview's `approval.token` and `execution.payload`.
+2. **Create/update:** `preview_write_entity(entity="sop", payload={...})` — pass the existing rule id as `entity_id` to update, omit it to create (fields: `get_schema(entity="sop", detail="payload_guide")`) → show the exact rule text and scope → approval → `execute_approved` with the preview's `approval.token` and `execution.payload`.
 3. **Retire:** deleting an SOP is not available via MCP — an admin deletes it on the dashboard's Workflow Rules page. To take a rule out of effect from the assistant, update it with `enabled: false`. When a rule changed in the business, prefer updating over delete-and-recreate, so history stays traceable.
 4. Verify after each change by re-reading the SOP list.
 

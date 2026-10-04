@@ -1,7 +1,7 @@
 ---
 name: weclapp-master-data
 description: "Use for weclapp master data care — creating and updating articles (Artikel), maintaining sales and purchase prices (Preispflege — price lists and price imports applied by the assistant, tier, customer and time-limited prices, scheduled base prices, promotions and visible reductions), managing article images, maintaining supplier supply sources (Bezugsquellen), keeping customer or supplier base data clean, and maintaining multi-language translations for articles, categories, and document texts. Master records that every document depends on. Triggers include Artikel anlegen, Artikelstamm, Preis ändern, Preisliste, Preisimport, Verkaufspreis, Einkaufspreis, Staffelpreis, Kundenpreis, Aktion, Preissenkung, Streichpreis, Artikelbild, Bezugsquelle, Übersetzung. Not for building Import/Export-Wizard files (csv-import), purchase orders or invoice checks (procure-to-pay), or audits of existing data (data-quality)."
-version: 0.5.0
+version: 0.5.1
 ---
 
 # Maintain weclapp master data
@@ -33,6 +33,8 @@ Before any preview, settle: which article or supply source, which sales channel 
 
 ### Pick the route
 
+Never send price rows as a raw `articlePrices` list in a normal article or supply-source write — the server rejects that. Every change to price rows is the single key `priceChanges` in the payload, with nothing else beside it; the two shortcuts in the table cover only their narrow case.
+
 | Job | Path | Approval action |
 |---|---|---|
 | One new general base price (no customer, tier 0) for a sales channel from a future date | `preview_write_entity(entity="article", payload={"basePriceSchedule": …})` | `set_article_price` |
@@ -42,19 +44,20 @@ Before any preview, settle: which article or supply source, which sales channel 
 
 - **`basePriceSchedule`** changes only the general base price; customer and tier prices stay untouched and cannot be changed here. Initial prices of a new article ride along with its create.
 - **`priceReduction`** keeps the base price as the strike-through price and has no end date. It needs an existing general base price in that channel — when the preview reports none, say so instead of creating a base price on your own. Resolve channel names with `get_reference_data(reference_type="salesChannel")`.
-- **`priceChanges`** works on exact existing rows and preserves every other tier, currency, customer and period. Choose the operation by intent: `overwrite` corrects the amount of one row in place (no history); `replaceFrom` ends the old row the day before and starts the new price on a date (history kept); `append` adds a first or additional row (new tier, customer price or currency). A time-limited promotion is `replaceFrom` with an end date and needs the user's explicit decision about what applies after it ends — either a gap in this price (other matching rows may then apply) or a return to the previous price. The guide lists further operations for ending a row or changing its dates or scope. One preview can cover several articles and supply sources.
+- **`priceChanges`** works on exact existing rows and preserves every other tier, currency, customer and period. Choose the operation by intent: `overwrite` corrects the amount of one row in place (no history); `replaceFrom` ends the old row the day before and starts the new price on a date (history kept); `append` adds a first or additional row (new tier, customer price or currency). A time-limited promotion is `replaceFrom` with an end date and needs the user's explicit decision about what applies after it ends — either a gap in this price (other matching rows may then apply) or a return to the previous price. `replaceFrom` without an end date on a time-limited row keeps that row's end; the preview names it. The guide lists further operations for ending a row or changing its dates or scope. Several articles and supply sources belong in one preview using the guide's bulk form, still wrapped in `priceChanges` — not one preview per record and not a plain list of records.
 - **`preview_write_supply_source`**: an article has at most one supply source per supplier — update the existing one by its ID instead of creating another. The supplier of an existing supply source cannot be changed; for another supplier create a new source. Its simple price change only touches one unambiguous general purchase price; anything else goes through `priceChanges` on the `articleSupplySource`. Purchase prices for a new supplier: create and verify the supply source first, then use its actual ID.
 
 ### Run it
 
 1. Read the route guide once: `get_schema(entity=…, detail="payload_guide", route="<route key>")` with `article` or `articleSupplySource` as the entity.
-2. Read the current price rows with `get_entity` on the article or supply source and pick the exact rows to change. The `basePrices` on search rows show only today's base price per channel, not the full list.
+2. Read the current price rows and pick the exact rows to change: `get_entity` on the article for sales prices; for purchase prices the supply-source search (`search_entities` on `articleSupplySource`) already returns the price rows with their IDs. Correcting or replacing a row needs that row's ID; only a new row (`append`) does not. The `basePrices` on search rows show only today's base price per channel, not the full list.
 3. Preview, then show per row old → new amount, currency, channel or customer, tier and validity, and what stays unchanged. Dates are calendar days (`YYYY-MM-DD`); an end date includes that day.
 4. Wait for the user's explicit approval, then `execute_approved` with the token and the complete `execution.payload` unchanged.
 5. Report the outcome per record: `verified`, `no_op` (already in the target state), `rejected_before_commit`, `ambiguous` or `not_attempted`. Several records are not one transaction: confirmed records stay written, nothing is rolled back, and a failure stops the rest.
-6. Split large lists into several previews of manageable size and confirm each part's outcome before preparing the next.
-7. Unclear outcome (`ambiguous`, timeout): never repeat the write. Read the affected records back and tell the user what is actually stored. The affected records stay locked for further price and supply-source writes until the unclear run is resolved — offer `preview_escalate_to_support` for that.
-8. Price rows are never deleted on this path. End a price with an end date instead; if the user explicitly wants a row removed, that happens in the weclapp UI.
+6. Split large lists into several previews and confirm each part's outcome before preparing the next. The server limits how many records and changes one preview may carry and rejects a larger one before touching weclapp, naming the limit.
+7. When a price preview is rejected, the error starts with the complete call form for `priceChanges`: copy that form and fill in your values. Do not guess another payload shape, do not retry with `articlePrices`, and never fall back to `execute_api` for price work.
+8. Unclear outcome (`ambiguous`, timeout): never repeat the write. Read the affected records back and tell the user what is actually stored. Only the records with an unclear outcome stay locked for further price and supply-source writes until the run is resolved — offer `preview_escalate_to_support` for that.
+9. Price rows are never deleted on this path. End a price with an end date instead; if the user explicitly wants a row removed, that happens in the weclapp UI.
 
 ## Article images
 

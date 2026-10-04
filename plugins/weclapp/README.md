@@ -2,7 +2,7 @@
 
 weclapp ERP workflows for your AI assistant — installable, auto-updating Agent Skills covering sales, fulfillment, procurement, master data, service tickets, and more. Pairs with the wals.pro AI MCP connection.
 
-Version 0.6.11 — 18 skills.
+Version 0.6.12 — 18 skills.
 
 ## Skills
 

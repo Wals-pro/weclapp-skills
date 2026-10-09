@@ -1,7 +1,7 @@
 ---
 name: weclapp-disposition
 description: "Use for weclapp replenishment / disposition — deciding WHAT and HOW MUCH to reorder and turning that into draft purchase orders. Triggers include Bestellvorschlag, Nachbestellung, Disposition, Meldebestand, Reichweite, Wiederbeschaffung, \"was muss ich nachbestellen\", low stock, reorder proposal. Covers pulling the replenishment view and creating supplier-grouped draft purchase orders. Invoice checking and payment belong to procure-to-pay; supplier master data belongs to master-data."
-version: 0.3.3
+version: 0.3.4
 ---
 
 # Run weclapp disposition (replenishment)

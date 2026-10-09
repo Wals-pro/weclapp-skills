@@ -1,7 +1,7 @@
 ---
 name: weclapp-admin-governance
 description: "Use for administering the wals.pro AI workspace itself — authoring and maintaining tenant workflow rules (SOPs) that steer how the assistant works, reviewing permissions, and answering governance questions from the activity history. Admin-level configuration, not business data. Triggers include Hausregeln, SOP anlegen, Arbeitsanweisung, Berechtigungen prüfen, wer hat was geändert. Not for business rules research without changing them (research) or connection problems (get-started)."
-version: 0.3.5
+version: 0.3.6
 ---
 
 # Govern the AI workspace

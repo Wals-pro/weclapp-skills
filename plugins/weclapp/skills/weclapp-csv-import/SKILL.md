@@ -1,7 +1,7 @@
 ---
 name: weclapp-csv-import
 description: "Use for building weclapp CSV import files — Massenimport / Datenübernahme of articles, customers, suppliers, contacts, prices and 30+ other data types via the Import/Export-Wizard. Covers template column specs, file format rules, import order, and pre-upload validation. Not for single-record changes or price lists applied directly by the assistant (master-data skill) and not for auditing existing records (data-quality skill)."
-version: 0.2.7
+version: 0.2.8
 ---
 
 # Build weclapp CSV import files

@@ -1,7 +1,7 @@
 ---
 name: weclapp-get-started
 description: "Use when connecting an AI assistant to weclapp via the wals.pro AI MCP server for the first time, when checking what the connection can do, or when diagnosing missing tools, permission errors, plan limits, or connection problems. Covers setup verification, a first successful read, troubleshooting, and safe escalation to support. Triggers include Verbindung einrichten, verbinden, Live- oder Demosystem, funktioniert nicht, Werkzeug fehlt, keine Berechtigung, Tariflimit, Support kontaktieren. Not for understanding entities, fields, or payloads (research)."
-version: 0.4.0
+version: 0.4.2
 ---
 
 # Get started with weclapp
@@ -73,9 +73,9 @@ The same channel carries two things: problems you cannot explain with the layers
 2. Show the preview to the user, including the central wals.pro support destination, and wait for their explicit approval.
 3. `execute_approved` with the preview's `approval.token` as `approval_token` and its `execution.payload` as `payload`.
 
-Do not treat escalation as a last resort reserved for outages. When the user misses a capability, criticises a workflow, or says "it would be great if…", offer to pass it on instead of waiting to be asked for a support channel. The preview's `policy` entries state how central support handles the ticket — relay them to the user rather than guessing; for tickets that reach wals.pro support, reviewing and implementing them is free of charge and wals.pro decides what gets built.
+Escalation is not reserved for outages: a missing capability, criticism of a workflow or an idea can be passed on the same way when the user wants that. The preview's `policy` entries state how central support handles the ticket — relay them to the user rather than guessing; for tickets that reach wals.pro support, reviewing and implementing them is free of charge and wals.pro decides what gets built.
 
-When the feedback is about the assistant itself — wrong answers, misused tools, safety concerns — use `preview_escalate_to_support(kind="chat_review")` with the same preview → approve → `execute_approved` pattern. That report goes to the weclapp-mcp team for review, not to wals.pro support, and needs none of the support ticket fields.
+When the feedback is about the assistant itself — wrong answers, misused tools, safety concerns — use `preview_escalate_to_support(kind="chat_review")` with the same preview → approve → `execute_approved` pattern. That report goes to the wals.pro team for review, not to wals.pro support, and needs none of the support ticket fields.
 
 ## Safe write contract
 

@@ -1,7 +1,7 @@
 ---
 name: weclapp-data-quality
 description: "Use when auditing weclapp master data or records for completeness and hygiene — checking article quality, shipment readiness, finding incomplete or inconsistent records, or producing a data-quality report (\"prüf meine Stammdaten\"). Read-only scoring and reporting; fixes happen through the matching write skill. Triggers include Datenqualität, Stammdaten prüfen, unvollständige Artikel, fehlende Felder, Versandbereitschaft. Not for fixing the findings (master-data or record-updates) or for business analysis (business-insights)."
-version: 0.2.6
+version: 0.2.7
 ---
 
 # Audit weclapp data quality

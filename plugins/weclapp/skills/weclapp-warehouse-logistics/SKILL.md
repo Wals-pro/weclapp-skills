@@ -1,7 +1,7 @@
 ---
 name: weclapp-warehouse-logistics
 description: "Use for weclapp warehouse work with no business partner involved — free stock corrections (Lagerkorrektur) for found stock, shrinkage, stocktaking differences and scrapping, moving stock between two storage places in the same warehouse, running a visible Transportauftrag pick/transit/put-down, and relocating stock between two different warehouses (interne Lieferung). Internal inventory movement, not a delivery from or to anyone. Triggers include Lagerkorrektur, Inventurdifferenz, Umlagerung, Lagerplatz wechseln, Transportauftrag, interne Lieferung. Not for goods receipt or shipping (fulfillment)."
-version: 0.2.9
+version: 0.2.10
 ---
 
 # Run weclapp warehouse logistics

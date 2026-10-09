@@ -1,9 +1,26 @@
 {
-  "name": "weclapp",
+  "name": "walspro-ai-4-weclapp",
+  "displayName": "wals.pro Ai 4 weclapp",
   "description": "weclapp ERP workflows for your AI assistant — installable, auto-updating Agent Skills covering sales, fulfillment, procurement, master data, service tickets, and more. Pairs with the wals.pro AI MCP connection.",
   "author": {
     "name": "wals.pro",
     "email": "support@wals.pro"
   },
-  "homepage": "https://ai.wals.pro"
+  "homepage": "https://ai.wals.pro",
+  "repository": "https://github.com/Wals-pro/weclapp-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "weclapp",
+    "erp",
+    "mcp",
+    "sales",
+    "fulfillment",
+    "procurement",
+    "skills"
+  ],
+  "icon": "./assets/icon.png",
+  "documentationUrl": "https://github.com/Wals-pro/weclapp-skills/blob/main/plugins/weclapp/README.md",
+  "supportUrl": "https://github.com/Wals-pro/weclapp-skills/issues",
+  "privacyPolicyUrl": "https://ai.wals.pro/privacy",
+  "termsOfServiceUrl": "https://ai.wals.pro/terms"
 }

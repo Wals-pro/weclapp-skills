@@ -1,7 +1,7 @@
 ---
 name: weclapp-contract-management
 description: "Use for weclapp contracts and recurring billing (Verträge) — creating or updating contracts, managing contract positions and billing intervals, checking runtimes and cancellation dates, and answering what a customer's contracts cover and cost. Triggers include Vertrag anlegen, Vertragsposition, Abrechnungsintervall, Laufzeit, Kündigungsfrist, wiederkehrende Rechnung. Not for one-off quotations, orders, or invoices (sales-operations)."
-version: 0.2.10
+version: 0.2.11
 ---
 
 # Manage weclapp contracts

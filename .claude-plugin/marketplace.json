@@ -11,7 +11,8 @@
   },
   "plugins": [
     {
-      "name": "weclapp",
+      "name": "walspro-ai-4-weclapp",
+      "displayName": "wals.pro Ai 4 weclapp",
       "source": "./plugins/weclapp",
       "description": "weclapp ERP workflows for your AI assistant — installable, auto-updating Agent Skills covering sales, fulfillment, procurement, master data, service tickets, and more. Pairs with the wals.pro AI MCP connection.",
       "author": {

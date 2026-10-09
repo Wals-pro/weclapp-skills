@@ -1,7 +1,7 @@
 ---
 name: weclapp-record-updates
 description: "Use when changing a single weclapp record that no specialized skill covers — updating fields on customers, suppliers, leads, opportunities, orders, invoices, mail templates, articles, tasks, or other writable entities, or triggering a workflow action on a record. The generic, safe edit path with preview and approval. Triggers include Feld ändern, Datensatz aktualisieren, Status setzen, Aktion auslösen. Not when a specialized skill owns the job (sales, fulfillment, procurement, master data, tickets, contracts)."
-version: 0.3.8
+version: 0.3.9
 ---
 
 # Update weclapp records safely

@@ -1,7 +1,7 @@
 ---
 name: weclapp-api-integration
 description: "Use when building or debugging your own integration against the weclapp REST API with an AI coding assistant — scripts, n8n, Power Automate, middleware, shop or WMS connectors. Covers getting the OpenAPI spec of your own tenant, 429 and load problems, filters that return too much or nothing, PUT that nulls fields or deletes items, webhooks and delta sync, date and decimal handling, v1 to v2 migration, unofficial endpoints. Triggers include REST-API-Integration, Schnittstelle bauen, Filter liefert alles, 429 Too Many Requests, PUT überschreibt Felder, Webhook, Delta-Sync, Datum ein Tag zu früh, API-Version. Not for daily work with weclapp data through the MCP connection (use the other weclapp skills) and not for CSV imports."
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Build and debug weclapp REST integrations

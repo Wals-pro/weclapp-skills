@@ -1,7 +1,7 @@
 ---
 name: weclapp-master-data
 description: "Use for weclapp master data care — creating and updating articles (Artikel), maintaining sales and purchase prices (Preispflege — price lists and price imports applied by the assistant, tier, customer and time-limited prices, scheduled base prices, promotions and visible reductions), managing article images, maintaining supplier supply sources (Bezugsquellen), keeping customer or supplier base data clean, and maintaining multi-language translations for articles, categories, and document texts. Master records that every document depends on. Triggers include Artikel anlegen, Artikelstamm, Preis ändern, Preisliste, Preisimport, Verkaufspreis, Einkaufspreis, Staffelpreis, Kundenpreis, Aktion, Preissenkung, Streichpreis, Artikelbild, Bezugsquelle, Übersetzung. Not for building Import/Export-Wizard files (csv-import), purchase orders or invoice checks (procure-to-pay), or audits of existing data (data-quality)."
-version: 0.5.2
+version: 0.5.3
 ---
 
 # Maintain weclapp master data

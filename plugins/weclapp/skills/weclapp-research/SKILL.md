@@ -1,7 +1,7 @@
 ---
 name: weclapp-research
 description: "Use when you need to understand weclapp before acting on it — which entity or field models a concept, what a writable payload must look like, which computed read-only fields (e.g. inventory value / cost) exist, which statuses and reference values exist, how the tenant is configured, or which business rules (SOPs) apply. Evidence-based API, schema, and configuration research, not data lookup. Triggers include welches Feld, welche Entität, Payload-Aufbau, Statuswerte, Referenzdaten, Mandanten-Einstellungen. Not for connection or permission problems (get-started) or for looking up tenant records (business-insights)."
-version: 0.4.7
+version: 0.4.8
 ---
 
 # Research weclapp knowledge

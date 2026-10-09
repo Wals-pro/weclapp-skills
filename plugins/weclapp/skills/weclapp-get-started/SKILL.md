@@ -1,7 +1,7 @@
 ---
 name: weclapp-get-started
 description: "Use when connecting an AI assistant to weclapp via the wals.pro AI MCP server for the first time, when checking what the connection can do, or when diagnosing missing tools, permission errors, plan limits, or connection problems. Covers setup verification, a first successful read, troubleshooting, and safe escalation to support. Triggers include Verbindung einrichten, verbinden, Live- oder Demosystem, funktioniert nicht, Werkzeug fehlt, keine Berechtigung, Tariflimit, Support kontaktieren. Not for understanding entities, fields, or payloads (research)."
-version: 0.4.2
+version: 0.4.3
 ---
 
 # Get started with weclapp

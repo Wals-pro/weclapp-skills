@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "weclapp",
+      "name": "walspro-ai-4-weclapp",
       "source": {
         "source": "local",
         "path": "./plugins/weclapp"

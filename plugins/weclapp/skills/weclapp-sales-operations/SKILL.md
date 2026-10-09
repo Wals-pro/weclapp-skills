@@ -1,7 +1,7 @@
 ---
 name: weclapp-sales-operations
 description: "Use for the weclapp sales process end to end — creating or updating customers, leads, CRM activities and campaigns, building quotations (Angebote), accepting them into sales orders, generating sales invoices from quotations or orders, finalizing and booking them after the user's review, and producing document PDFs. The complete lead-to-invoice workflow with preview and approval on every write. Triggers include Angebot schreiben, Angebot annehmen, Auftrag anlegen, Rechnung erstellen, Rechnung buchen, Lead, Kampagne. Not for recurring contract billing (contract-management) or shipping the order (fulfillment)."
-version: 0.3.6
+version: 0.3.7
 ---
 
 # Run the weclapp sales process

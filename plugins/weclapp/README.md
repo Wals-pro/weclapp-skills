@@ -1,8 +1,8 @@
-# weclapp
+# wals.pro Ai 4 weclapp
 
 weclapp ERP workflows for your AI assistant — installable, auto-updating Agent Skills covering sales, fulfillment, procurement, master data, service tickets, and more. Pairs with the wals.pro AI MCP connection.
 
-Version 0.7.0 — 19 skills.
+Version 0.7.1 — 19 skills.
 
 ## Skills
 
@@ -28,4 +28,28 @@ Version 0.7.0 — 19 skills.
 
 ## wals.pro AI MCP connection
 
-These skills drive the wals.pro AI MCP server at `https://mcp.ai.wals.pro/v1/mcp`. Add that connection first, sign in and pick your weclapp tenant, then install this plugin. The plugin deliberately ships no `.mcp.json`: in claude.ai a bundled server fails to install next to an existing connection on the same URL, and the connection-first order is the same on every client. Skills never mutate data without the preview → approval flow.
+These skills drive the wals.pro AI MCP server at `https://mcp.ai.wals.pro/v1/mcp`. The bundled `.mcp.json` configures one remote HTTPS server. Install the plugin, authorize the MCP connection in your client, and select your weclapp tenant. An existing connection on the same URL can cause a duplicate-connection error; review client settings before changing it. Skills never mutate data without the preview → explicit user approval flow.
+
+## Installation and existing users
+
+Claude Code: `/plugin install walspro-ai-4-weclapp@weclapp-skills` after `/plugin marketplace add Wals-pro/weclapp-skills`. Claude Desktop or Cowork: add the repository as a marketplace in Customize → Plugins, then install wals.pro Ai 4 weclapp. See the repository README for Codex and ChatGPT installation.
+
+Existing `weclapp@weclapp-skills` users: install `walspro-ai-4-weclapp@weclapp-skills`, check the connection, then disable the old plugin yourself. No automatic removal or credential migration.
+
+## Data handling and permissions
+
+Skills are local workflow instructions. They ship no executable hooks, local server, API keys, passwords, or credential-store commands. The bundled server connects to the hosted wals.pro service over HTTPS with user authorization. ERP requests pass through wals.pro to your selected weclapp tenant; returned records enter your AI conversation and are handled by your AI provider. Request only the data needed for your task. Read access depends on account permissions; changes require preview, explicit confirmation and approved execution. Optional support reports require their own preview and confirmation.
+
+Privacy: https://ai.wals.pro/privacy
+
+Terms: https://ai.wals.pro/terms
+
+Documentation: https://github.com/Wals-pro/weclapp-skills/blob/main/plugins/weclapp/README.md
+
+Support: https://github.com/Wals-pro/weclapp-skills/issues
+
+The API-integration skill also teaches direct HTTPS requests to your own weclapp REST API outside the bundled MCP connector. Use that tenant's own credentials. External workflow destinations are used only when you instruct the assistant to build or use such an integration; configure each service with your own authorized credentials. Nothing is shared between customers.
+
+## License
+
+See the LICENSE file shipped inside this plugin.

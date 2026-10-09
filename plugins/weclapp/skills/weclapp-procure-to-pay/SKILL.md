@@ -1,7 +1,7 @@
 ---
 name: weclapp-procure-to-pay
 description: "Use for the weclapp purchasing and payables process — creating purchase orders, verifying and correcting purchase invoices (Rechnungsprüfung), finding open items, matching bank transactions to invoices, applying payments, and cancelling booked invoices. Buying, invoice checking, and reconciliation as one flow. Triggers include Bestellung beim Lieferanten, Eingangsrechnung, Rechnungsprüfung, offene Posten, Zahlung zuordnen, Bankabgleich. Not for deciding what to reorder (disposition) or booking the goods receipt (fulfillment)."
-version: 0.4.5
+version: 0.4.6
 ---
 
 # Run procure-to-pay

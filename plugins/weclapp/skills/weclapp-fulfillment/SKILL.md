@@ -1,7 +1,7 @@
 ---
 name: weclapp-fulfillment
 description: "Use for weclapp warehouse and shipping work — booking incoming goods (Wareneingang) with or without a purchase order behind them, preparing and shipping outbound deliveries (Versand), partial deliveries, reworking a shipment that is not ready, and cancelling shipments. The physical goods flow, inbound and outbound. Triggers include Lieferschein, Wareneingang buchen, Versand, Teillieferung, Lieferung stornieren, Sendung nacharbeiten. Not for stock corrections or moves without a business partner (warehouse-logistics)."
-version: 0.3.5
+version: 0.3.6
 ---
 
 # Run weclapp fulfillment

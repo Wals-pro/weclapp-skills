@@ -1,7 +1,7 @@
 ---
 name: weclapp-time-tracking
 description: "Use when booking or evaluating working time in weclapp (Zeiterfassung) — recording hours on tickets, project tasks, or service quotas, and answering questions like how much time was booked on a project, customer, or period. Triggers include Zeit buchen, Stunden erfassen, Zeitbuchung, Arbeitszeit auswerten, Stundenkontingent. Not for managing the tickets or tasks themselves (service-tickets, task-management)."
-version: 0.3.5
+version: 0.3.8
 ---
 
 # Book and evaluate time
@@ -19,9 +19,9 @@ A booking lands on one of: a **sales-order ticket**, a **service quota**, or a *
 
 ## Booking
 
-1. Resolve who books. On a connection with a **personal** weclapp API key, leave `user_id` out when the user books their own time: the preview takes the key's own identity and shows it as `booking_user` — check that name with the user. On a shared tenant or service key, `user_id` (or `user_email`) is required, because the booking would otherwise land on the API user; `get_acting_identity` names the connection's user, and a colleague's time needs that colleague's id. A preview refusing with `missing_user` means exactly this.
+1. Resolve who books. Every booking preview names the person it books for as `booking_user` — check that name with the user before approving. For the user's own time on a connection with a **personal** weclapp API key, leave `user_id` out: the preview takes the key's own identity. For a colleague's time, pass that colleague's `user_id` (or `user_email`); whether the connection may book for others, such as a team lead for the team, is decided by the weclapp rights of the user behind the key, so a refusal from weclapp is the answer, not something to work around. On a shared tenant or service key, `user_id` (or `user_email`) is always required, because the booking would otherwise land on the API user; `get_acting_identity` names the connection's user. A preview refusing with `missing_user` means exactly this; `user_not_found` means the id or address names no weclapp user.
 2. `preview_write_entity(entity="timeRecord", payload={"booking": {"ticket_id": ..., "date": "YYYY-MM-DD", "start_time": "09:00", "duration_minutes": 30, "description": ...}})` — `booking` is the payload's only key and its fields are snake_case (`task_id` or `sales_order_id` instead of `ticket_id` for other targets). The description says what was done (it appears on evaluations and invoices — write it customer-safe). The booking route resolves or creates the task the time must sit on; `get_schema(entity="timeRecord", detail="payload_guide")` lists every booking field. Do not build a plain `timeRecord` create instead; when a preview refuses one, it names the booking call to use.
-3. Show the preview — target, duration, billability — and wait for approval.
+3. Show the preview — booking user, target, duration, billability — and wait for approval.
 4. `execute_approved` with the preview's `approval.token` as `approval_token` and its `execution.payload` as `payload`, then confirm the created record with one read of the booking.
 
 If the preview reports the target does not accept bookings, the target type or its state is wrong — re-resolve instead of retrying. Never book the same work twice because a result was unclear; check what exists first.

@@ -5,7 +5,7 @@ Source labels: **weclapp docs** (section "Load management" in the spec), **Lanig
 ## How weclapp protects itself
 
 - **No fixed rate limit.** weclapp wants to keep it that way: parallel requests are allowed, and normal use should feel no limit. *(weclapp docs, Lanig talk)*
-- **Queue first, 429 later.** There is a limit on concurrent active requests per tenant. Requests above it are not rejected; they wait, currently up to about 30 seconds. After that the API answers **HTTP 429 Too Many Requests**. *(weclapp docs)*
+- **Queue first, 429 later.** There is a limit on concurrent active requests per tenant. Requests above it are not rejected; they wait, currently up to about 30 seconds. After that the API answers **HTTP 429 Too Many Requests**. *(weclapp docs; the 30 seconds are described as the current value, not a guaranteed limit, so confirm with weclapp before relying on the exact number)*
 - **Sustained load counts too.** weclapp looks at effective request time (request-seconds). Many cheap requests are fine; many expensive ones over minutes are not. *(weclapp docs)*
 - **Request-seconds = requests x duration x parallel threads**, evaluated over a time window. *(Lanig talk)* Worked example from the talk, an illustration and not a guaranteed per-tenant value: with a 60-second window and a load factor of 3 (180 available request-seconds), 500 requests x 100 ms = 50 request-seconds is harmless, 200 x 400 ms x 2 threads = 160 is still fine, and 500 x 100 ms x 4 threads = 200 leads to about 20 seconds of waiting.
 - **A 429 is a signal, not an error to hammer.** Immediate retries add load; back off. *(Lanig talk, weclapp docs)*

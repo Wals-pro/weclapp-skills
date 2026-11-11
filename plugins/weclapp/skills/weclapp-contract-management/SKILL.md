@@ -1,7 +1,7 @@
 ---
 name: weclapp-contract-management
 description: "Use for weclapp contracts and recurring billing (Verträge) — creating or updating contracts, managing contract positions and billing intervals, checking runtimes and cancellation dates, and answering what a customer's contracts cover and cost. Triggers include Vertrag anlegen, Vertragsposition, Abrechnungsintervall, Laufzeit, Kündigungsfrist, wiederkehrende Rechnung. Not for one-off quotations, orders, or invoices (sales-operations)."
-version: 0.2.11
+version: 0.2.15
 ---
 
 # Manage weclapp contracts
@@ -29,9 +29,10 @@ After every write, re-read the contract and confirm positions, intervals, and da
 
 - Read the exact current contract and position IDs/versions first. Existing DRAFT and ACTIVE contracts support sparse position revisions; unchanged positions are preserved. Keep existing billing flags, taxes and intervals unless that exact change was requested.
 - Revise one position array per approval; period changes and additions within that array can share a preview. Header changes need a separate approval and fresh version. New positions have no existing ID. Removing positions requires explicit consent and is limited to unbilled draft rows in the primary array; removal from the separate cost array remains blocked.
-- Choose the array from the current record and payload guide, not from the word “cost”: the primary contract positions can represent either costs or revenue. Preserve existing types, taxes and manual flags; set the intended cost type explicitly on new cost positions. Sparse existing-row updates need not repeat their tax reference. The separate cost array on sales contracts has a different schema without that tax reference; this never permits tax writes on invoices or other entities.
+- Choose the array from the current record and payload guide, not from the word “cost”: the primary contract positions can represent either costs or revenue. Preserve existing types, taxes and manual flags; set the intended cost type explicitly on new cost positions. Exception: a primary position that takes its price from the article keeps that price even after the article price changes; to give it a new price, switch it to a manual price together with the new price in one revision, and show the old and new price per position before approval. Sparse existing-row updates need not repeat their tax reference. The separate cost array on sales contracts has a different schema without that tax reference; this never permits tax writes on invoices or other entities.
 
 
+- Invoice, delivery and correspondence address of an existing contract can be changed with a header update: send only the changed address lines; the preview shows the old and the new address per field. Show that comparison to the user before approving. weclapp marks an address as differing on its own, so never set those markers yourself. The new address applies to future billing; invoices that already exist keep their address.
 - Changing a live contract affects future invoices — state the effective consequence ("next invoice will be…") in the preview discussion, not just the field diff.
 - Never terminate or reduce a contract without the user naming the contract explicitly; when several match, list and ask.
 

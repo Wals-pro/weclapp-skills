@@ -1,7 +1,7 @@
 ---
 name: weclapp-task-management
-description: "Use for daily task and collaboration work in weclapp — finding open or overdue tasks, creating single tasks or whole batches (from a meeting, a plan, or a checklist), commenting on records, checking task quality, and reviewing what recently happened via the activity history. Triggers include Aufgabe anlegen, offene Aufgaben, überfällige Aufgaben, Kommentar schreiben, was ist passiert. Not for service tickets (service-tickets) or time bookings (time-tracking)."
-version: 0.2.10
+description: "Use for daily task and collaboration work in weclapp — finding open or overdue tasks, creating single tasks or whole batches (from a meeting, a plan, or a checklist), changing several existing tasks at once, commenting on records, checking task quality, and reviewing what recently happened via the activity history. Triggers include Aufgabe anlegen, Aufgaben gesammelt ändern, offene Aufgaben, überfällige Aufgaben, Kommentar schreiben, was ist passiert. Not for service tickets (service-tickets) or time bookings (time-tracking)."
+version: 0.2.11
 ---
 
 # Manage tasks and collaboration
@@ -18,7 +18,8 @@ Writes follow the two-step pattern: `preview_*` → user approval → `execute_a
 ## Creating tasks
 
 - **One task:** `preview_write_entity` (entity `task`) → approval → `execute_approved`. A good task names the outcome, the owner, and the due date; when in doubt, re-read the created task with `get_entity(include_quality=True)` and fix the findings it reports.
-- **Many tasks** (meeting follow-ups, project breakdown): `preview_write_entity` with `entity="task"` and `payload={"items": [...]}` — one preview and one approval for the whole batch. Show the complete list before approval; after executing, report every created task with its ID.
+- **Many tasks** (meeting follow-ups, project breakdown): `preview_write_entity` with `entity="task"` and `payload={"items": [...]}` listing only new tasks — one preview, but one approval token **per task** (executes are separate calls). Show the complete list before approval; after executing, report every created task with its ID.
+- **Changing many existing tasks** (move several due dates, set a priority or status on a list): the same tool, with every item naming the existing task and only the changed fields — then ONE token covers the whole batch and ONE `execute_approved` writes them all, one task after another. Find the tasks with one `search_entities` call first, show the before/after of every task once and wait for the user's explicit confirmation. Only some fields work in bulk, and the preview says which ones and how many tasks one batch may hold; subject, description, assignees, visibility and links are changed per task. Preview new tasks and changes to existing tasks separately; the preview refuses a mix. A single task is not a batch — use the normal task write. A changed task is never created as a copy. A bulk update is not rolled back: if a later task fails, report what the result says was written per task and do not re-run the batch blindly. weclapp can send its own task notifications for each changed task; say so before changing the status of many tasks.
 - Link tasks to the record they belong to (ticket, order, customer) whenever the context names one, so they surface where people work.
 
 ## Comments

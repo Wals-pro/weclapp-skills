@@ -1,7 +1,7 @@
 ---
 name: weclapp-service-tickets
 description: "Use for service-desk work on weclapp tickets — triaging open tickets, assembling the customer context behind a case, updating ticket status and assignment, replying via comments, checking ticket quality, and creating follow-up tasks. The support process from intake to resolution. Triggers include Ticket, Support-Anfrage, Service-Fall, Ticket zuweisen, Ticket beantworten, Ticketstatus. Not for general task lists (task-management) or booking time on a ticket (time-tracking)."
-version: 0.3.4
+version: 0.3.5
 ---
 
 # Work weclapp service tickets
@@ -37,6 +37,8 @@ For the specific inconsistent-CC validation failure, follow the server's diagnos
 ## Closing discipline
 
 Run `get_entity` with `include_quality=True` on the ticket before closing — the quality report flags missing assignment, priority, or resolution documentation so a ticket doesn't close with an unanswered warning. Before closing: the resolution is documented in a comment, follow-ups exist for anything promised, and the customer-facing answer went out. Then set the final status via the normal preview → approve path and re-read to confirm.
+
+Spam and duplicates are closed silently: one `preview_write_entity` update with `disableEmailTemplates: true` and the closing status. weclapp closes only a ticket that has an assignee; add `assignedUserId` to the same update only when the ticket has none. Use it for spam and duplicates only: the flag stays on the ticket, so a reopened ticket stays silent until it is set back to `false`. A public comment still sends its own mail.
 
 ## Safe write contract
 

@@ -1,7 +1,7 @@
 ---
 name: weclapp-sales-operations
-description: "Use for the weclapp sales process end to end — creating or updating customers, leads, CRM activities and campaigns, building quotations (Angebote), accepting them into sales orders, generating sales invoices from quotations or orders, finalizing and booking them after the user's review, and producing document PDFs. The complete lead-to-invoice workflow with preview and approval on every write. Triggers include Angebot schreiben, Angebot annehmen, Auftrag anlegen, Rechnung erstellen, Rechnung buchen, Lead, Kampagne. Not for recurring contract billing (contract-management) or shipping the order (fulfillment)."
-version: 0.3.7
+description: "Use for weclapp sales — customers, leads, CRM activities and campaigns, quotations, linking an opportunity to its quotation, accepting quotations into orders, invoices (finalizing and booking after review) and document PDFs. Every write needs preview and approval. Triggers include Angebot schreiben, Angebot annehmen, Chance mit Angebot verknüpfen, Auftrag anlegen, Rechnung erstellen, Rechnung buchen, Lead, Kampagne. Not recurring contract billing (contract-management) or shipping (fulfillment)."
+version: 0.3.14
 ---
 
 # Run the weclapp sales process
@@ -32,11 +32,60 @@ Updates require the current `version` and only intended fields. The server reche
 
 For PERSON address correction use `preview_write_entity(entity="party", entity_id=<id>, payload={"primaryAddressId": <address_id>})` (action `correct_person_primary_address`). The address must belong to the PERSON or its verified `parentPartyId` ORGANIZATION. Only the primary reference changes; no address is implicitly deleted, no country guessed, and `customerBusinessType` remains unchanged. Native weclapp may generate an empty address with its tenant country and B2C when creating a PERSON; the MCP cannot promise to suppress those defaults.
 
+## Link an opportunity to its quotation
+
+Use this workflow when an existing opportunity should take its value from an
+existing quotation. Read both records and discover the opportunity's
+`linkQuotation` route with `get_entity_action_catalog`; use
+`preview_entity_action`, then `execute_approved` only after the user approves
+its effects. Keep the execution payload unchanged.
+
+The route initially supports the same customer and `NET1` on both records,
+without currency conversion. The quotation must be active and eligible; other
+channels, cross-channel migration, another linked quotation or a foreign
+opportunity relation stop the workflow. The quotation header's `netAmount`
+leads, including zero. Do not substitute the old revenue or an order value.
+
+The preview refuses unless opportunity and quotation already share the same
+stage and probability; ask the user to align both in weclapp first. Show the
+user the shared stage and probability that will be preserved. The assistant
+never changes phases itself.
+
+| Result | Next step |
+| --- | --- |
+| Verified existing link | Report it without another write. |
+| Changed records before a mutation | Read the current state and prepare a fresh preview. |
+| Clean weclapp rejection, records unchanged (`failed_safe`) | Report the reason; nothing was written. Fix the cause in weclapp, then prepare a fresh preview. |
+| Partial change, missing readback, unexpected phase change or unknown outcome | Stop for operator review; do not retry with a fresh approval or repair revenue, quotation or order fields. |
+
+Read pipeline assignments through `get_reference_data` for `salesPipeline`,
+with `salesChannel` and `salesStage` for labels and probabilities. Pipeline
+discovery is unofficial and may be unavailable. It authorizes no pipeline
+write or channel migration and does not extend linkage beyond `NET1`.
+
+There is no verified direct native opportunity-to-order route. Never create a
+surrogate quotation to simulate it. Won when the customer places the order; track later go-live on the
+linked order/project. The native link action preserves the existing opportunity
+phase and does not automatically mark it won. Done means the native relation and quotation-led value are verified,
+the shared opportunity stage/probability are preserved, and related orders
+are unchanged; otherwise report the unresolved outcome explicitly.
+
 ## Quotations (Angebote)
 
 1. Resolve the customer and the articles (a known article number can also be read directly with `get_entity`). Use `search_entities` with `entity="article"` and `view_options` — exact matches on EAN, partial matches on article number (for example `view_options={"article_number": "TERRA-10"}` or `{"ean": "4039407..."}`) — and confirm ambiguous articles with the user; the preview reports article candidates when resolution is unclear.
 2. Build the quotation via `preview_write_entity` (entity `quotation`) with positions referencing resolved articles; manual positions without an article need enough detail to be billable. "Only as a preview first" needs no extra flag — the preview never writes; nothing exists until `execute_approved`.
 3. Show the preview — positions, prices, taxes, totals — get approval, execute via `execute_approved`, then re-read and present the document number.
+
+### Shipping costs (Versandkosten)
+
+Quotations, sales orders and sales invoices take shipping costs as `shippingCostItems` rows
+(`articleId` of an active shipping-cost article, `unitPrice`, optional
+`manualUnitPrice`), never as a normal position — weclapp keeps them out of the
+header discount. Send them with the create, or later in a
+`preview_write_entity` payload that holds only `version` and
+`shippingCostItems` (open quotation, order still in entry, invoice in `NEW`): rows
+with `id` are changed, rows without `id` are added, rows you leave out stay. No
+row is ever deleted this way.
 
 ### Changing positions on an existing quotation
 
@@ -111,17 +160,25 @@ it rejects PERSON contacts and does not fill the printed name or delivery e-mail
 ## Quotation → order → invoice
 
 - **Accept a quotation:** `preview_entity_action(entity="quotation", action="accept", entity_id=...)` → approval → `execute_approved`. This creates the follow-on document the quotation type names, normally a sales order: report `created_sales_order_number` from the result. If `readback.status` is not `found` (none, several, lookup failed, other document type), tell the user what `readback.note` says and never create a sales order manually before checking for an existing one. For an `OPEN` quotation the preview may disclose `entry_completion`: on weclapp's new status flow the approval also completes the entry (header and positions then lock). Show that to the user before approving.
+- **Sales order with its own number:** when the user wants a specific order number (e.g. a customer's import range), create the order with `preview_write_entity(entity="salesOrder", payload={"customerId": ..., "orderNumber": "<number>", ...})`. Only on create, never on an update. If the preview fails with `order_number_taken`, report `existing_sales_order_id` and ask for another number; never alter the number yourself. Without `orderNumber`, weclapp assigns the next number.
+- **Blanket sales order (Rahmenauftrag):** a framework agreement with one customer over **one** article and a total quantity: `preview_write_entity(entity="blanketSalesOrder", payload={"customerId": ..., "articleId": ..., "orderQuantity": ..., "startDate": ..., "endDate": ...})`. Read `get_schema(entity="blanketSalesOrder", detail="payload_guide")` first. A price (`unitPrice`) makes it a manual price; without one weclapp keeps the article price. Call-offs (`releases`, each with quantity, order date and planned shipping date) only on create; an update keeps existing call-offs. Status changes and deletion stay in weclapp.
 - **Invoice from a quotation:** `preview_entity_action(entity="quotation", action="createSalesInvoice", entity_id=...)` → approval → `execute_approved`. Optional header overrides go in `payload={"overrides": {...}}`.
 - **Invoice from a sales order:** the same call with `entity="salesOrder"`. Follow-on documents generally require the source document to be in a confirmed state — if the preview reports a state problem, resolve that first instead of forcing it.
+- **Collective invoice (Sammelrechnung):** add `payload={"additionalSalesOrderIds": [<order id>, ...]}` to the sales-order call — one draft over this order and further confirmed orders of the same customer that still have an open quantity. If the preview names an order as not eligible (other customer or currency, not confirmed, prepayment, fully invoiced), drop or fix that order instead of retrying. After the write, report `collective_invoice.verified`.
+- **Remove positions from a draft invoice:** on a `NEW` invoice, positions that came from an order can be kept or removed, never edited. Use `preview_write_entity` with `allow_item_removal=true` and only the positions to keep; the removed quantity becomes open on its order again and lands on the next invoice. Change prices or quantities on the order, not on the invoice.
 - **Prepayment (Vorkasse) orders** get their final invoice from `preview_entity_action(entity="salesOrder", action="createPrepaymentFinalInvoice", entity_id=...)`, not from `createSalesInvoice` (weclapp refuses it; the preview says so). The same header overrides, e.g. `shippingDate` as the Leistungsdatum, go in `payload={"overrides": {...}}`. If the result reports the invoice as created but its header update as unconfirmed, check the invoice in weclapp and never run the action again.
 - **Stop after creating an invoice.** A new invoice is a draft (`NEW`, preliminary number) — the pro forma. Never finalize or book it in the same step: tell the user to review the draft in weclapp (positions, prices, taxes, customer, dates) and wait for their confirmation.
-- **Finalize or book only after the review:** `preview_write_entity` on the invoice with a status-only payload — `DOCUMENT_CREATED` creates the document and the final number, `OPEN_ITEM_CREATED` additionally books the open item. Show the preview's effects to the user; afterwards the invoice can no longer be deleted, only cancelled. If the preview reports active invoice mail rules, the invoice will be emailed — ask the user explicitly before repeating the preview with their consent.
+- **Finalize or book only after the review:** `preview_write_entity` on the invoice with a status-only payload — `DOCUMENT_CREATED` creates the document and the final number, `OPEN_ITEM_CREATED` additionally books the open item. Show the preview's effects to the user; afterwards the invoice can no longer be deleted, only cancelled — a finalized but not yet booked invoice (`DOCUMENT_CREATED`) as well as a booked one (procure-to-pay skill). If the preview reports active invoice mail rules, the invoice will be emailed — ask the user explicitly before repeating the preview with their consent.
 
 ## PDFs
 
 `preview_entity_action(entity=..., action="createPdf", entity_id=...)` → approval → `execute_approved` renders the official document PDF (quotation, order confirmation, invoice, shipment delivery note). Generate the PDF only after the document content is approved and verified. A draft invoice has no PDF until the user reviewed and finalized it.
 
 With weclapp's new quotation status flow a quotation document is created only once its entry is completed; tenants on the legacy flow still print open quotations directly. For a quotation in status `OPEN` the preview carries an `entry_completion` block: if weclapp demands it, the approval completes the entry (`ENTRY_COMPLETED`) — the same step the weclapp UI performs when printing — and then renders the PDF. Show that block to the user before asking for approval. The result's `entry_completion` says what happened: `NOT_REQUIRED` (printed, status unchanged) or `STATUS_CHANGED` (header and positions are now read-only until the quotation is reopened — see quotation revisions above). If a weclapp approval rule applies to completing quotation entries, the result reports `APPROVAL_REQUESTED` and no PDF; tell the user and run the preview again once the approval is granted.
+
+## Public quotation link
+
+When the customer should open the quotation in the browser, `preview_entity_action(entity="quotation", action="createPublicPageLink", entity_id=...)` → approval → `execute_approved` returns weclapp's public link as `public_link`. weclapp creates it only once the entry is completed: an `OPEN` quotation is refused, generate the PDF first. If the quotation already has a link, the preview returns it right away without an approval. Replace it only when the user asks for a new one (`payload={"renew": true}`) and tell them the old link may stop working. weclapp sends nothing: hand the link to the user, never claim it was e-mailed. Sending the quotation by e-mail template is not available through the assistant; the user sends it from weclapp.
 
 ## Safe write contract
 

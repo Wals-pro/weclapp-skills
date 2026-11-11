@@ -1,7 +1,7 @@
 ---
 name: weclapp-business-insights
 description: "Use when answering questions from live weclapp ERP data — finding records, building a customer or record 360° view, aggregating numbers, or explaining what is open, overdue, or unusual. Read-only analysis of tenant data such as customers, orders, invoices, articles, and tickets. Triggers include Kunde 360, Umsatz, offene Rechnungen, überfällig, Auswertung, \"wie viele\", \"zeig mir\". Not for data-quality audits (data-quality) or for changing records (the matching write skill)."
-version: 0.3.11
+version: 0.3.12
 ---
 
 # Business insights from weclapp
@@ -38,6 +38,7 @@ For "tell me everything about X":
 - **Show your basis.** Name the entity, the filters used, and the record count behind every number. If a result is empty, say the search was empty rather than concluding the data does not exist — the filter may be wrong.
 - **Cancelled is not open.** weclapp does not reset `purchaseInvoice.paymentStatus` on cancellation: a stornierte Einkaufsrechnung keeps `paymentStatus = OPEN` while its open item is gone. On invoice rows read `payment_open` and the verified `open_item_exists` that `search_entities` and `get_entity` return (also with a slim `properties` projection), not the raw `paymentStatus`. Unpaid invoices are the filter pair `paymentStatus eq OPEN` plus `status ne CANCELLED` (purchase invoices have no `paid` field); the supplier name comes along compactly with `include_referenced_entities=["supplierId"]` and `properties=["supplier:company"]`.
 - **Respect limits.** Result sets are truncated server-side. If a total matters, aggregate; do not sum a truncated page.
+- **Use the totals.** Grouped results carry totals over all groups — use them instead of adding up the returned groups. A cut time series keeps the newest periods and says so; mention the cut or narrow the date range.
 - **Contract invoice selection.** Ask for the actual exclusion terms, inspected item fields and literal match rule; never invent them. The sales-invoice search view checks every position and separates rule suitability, direct contract evidence and weclapp's send flag. For large selections, request compact grouped IDs and verdicts, follow every result page, and fetch individual details only where needed. Keep all verdict groups and the unknown send-status group visible; unknown origin or missing fields still needs review. “Created on” means creation date, not invoice date. Read the exact selected IDs again when a current send status matters.
 - **Native invoice dispatch.** The customer's admin configures Beleg-E-Mail-Versandregeln in weclapp. Read the Boolean send flag only; missing means unknown and true does not prove inbox delivery. Never send, change rules or write that flag. Do not promise retroactive sending from a newly created rule.
 

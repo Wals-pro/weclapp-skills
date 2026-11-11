@@ -1,7 +1,7 @@
 ---
 name: weclapp-api-integration
 description: "Use when building or debugging your own integration against the weclapp REST API with an AI coding assistant — scripts, n8n, Power Automate, middleware, shop or WMS connectors. Covers getting the OpenAPI spec of your own tenant, 429 and load problems, filters that return too much or nothing, PUT that nulls fields or deletes items, webhooks and delta sync, date and decimal handling, v1 to v2 migration, unofficial endpoints. Triggers include REST-API-Integration, Schnittstelle bauen, Filter liefert alles, 429 Too Many Requests, PUT überschreibt Felder, Webhook, Delta-Sync, Datum ein Tag zu früh, API-Version. Not for daily work with weclapp data through the MCP connection (use the other weclapp skills) and not for CSV imports."
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Build and debug weclapp REST integrations
@@ -34,7 +34,7 @@ Sources are labelled in the reference files: **weclapp docs** (the user document
 2. **One API token per integration.** The token inherits all rights of its user, there are no token scopes, and generating a new token invalidates every previous one. A dedicated user per integration keeps rights narrow and the change history attributable.
 3. **Project what you read.** Always send `properties=…` with exactly the fields you use. Never poll unfiltered.
 4. **Handle 429 with exponential backoff and jitter**, and keep concurrency bounded. See [references/load-management.md](references/load-management.md).
-5. **Client timeouts of at least 60 seconds.** weclapp may queue a request for about 30 seconds before processing it; a 30-second client timeout aborts exactly then.
+5. **Client timeouts of at least 60 seconds.** weclapp may queue a request for about 30 seconds before processing it; a 30-second client timeout aborts exactly then. The 30 seconds are the current value in weclapp's docs, not a guaranteed limit; confirm with weclapp before you tune timeouts tightly around it.
 6. **Never retry a write blindly.** A timeout or 409 does not mean "not saved". Re-read, verify, then decide. See [references/writing.md](references/writing.md).
 7. **A PUT replaces the entity.** Use a full read-modify-write, or `ignoreMissingProperties=true` plus `version`, and send item arrays as a merge. See [references/writing.md](references/writing.md).
 8. **Unknown filters are silently ignored.** Prove each new filter with `/count` and a boundary check. See [references/reading.md](references/reading.md).

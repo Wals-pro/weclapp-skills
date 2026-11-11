@@ -43,7 +43,7 @@ Content-Type: application/json
   "atUpdate": true,
   "atDelete": false,
   "requestMethod": "POST",
-  "url": "https://integration.example.com/hooks/weclapp?k=<secret-path-token>"
+  "url": "https://integration.example.com/hooks/weclapp/<secret-path-token>"
 }
 ```
 
@@ -58,7 +58,7 @@ What the spec does **not** document: payload format, signing, retry policy, auto
 ### Receiver pattern
 
 1. **Acknowledge fast** (2xx), do the work asynchronously (queue). Do not call weclapp synchronously inside the request unless it is trivial.
-2. **Never trust the payload as truth.** It is a hint. GET the entity by ID with your own token and decide from the fresh state; an unauthenticated URL can be called by anyone, so also protect the URL (long random path token, allow-listing where possible, no secrets in logs) and treat it as an untrusted trigger.
+2. **Never trust the payload as truth.** It is a hint. GET the entity by ID with your own token and decide from the fresh state; an unauthenticated URL can be called by anyone, so also protect the URL (long random token as a path segment, never as a query parameter such as `?k=…`, because query strings end up in access logs, proxies and monitoring; allow-listing where possible; mask the path segment in your own logs; the webhook schema has no field for custom headers, so the token cannot move into a header) and treat it as an untrusted trigger.
 3. **Exit early** on the fresh state: wrong status, wrong document type, already processed.
 4. **State in the record, not in your memory.** Custom-attribute checkboxes such as "label created" make processing resumable and visible; a human can reset one to trigger reprocessing. *(wals.pro practice)*
 5. **Lock per entity** with a lease (for example five minutes), re-read after acquiring it (double check), release in `finally`.

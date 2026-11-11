@@ -24,7 +24,7 @@ codex plugin add walspro-ai-4-weclapp@weclapp-skills
 
 A workspace admin opens **Workspace settings → Plugins → Add → Import marketplace**, enters this repository's URL as Source (leave Path empty) and sets the installation policy. ChatGPT syncs the marketplace daily; **Sync now** pulls updates immediately.
 
-Ships one plugin, **walspro-ai-4-weclapp**, bundling 19 skills (version 0.7.1).
+Ships one plugin, **walspro-ai-4-weclapp**, bundling 19 skills (version 0.7.30).
 
 The skills drive the wals.pro AI MCP server at `https://mcp.ai.wals.pro/v1/mcp`. The plugin bundles this remote MCP connection. Install, authorize the connection in the client and select your weclapp tenant. No API key is shipped or requested by the skills.
 

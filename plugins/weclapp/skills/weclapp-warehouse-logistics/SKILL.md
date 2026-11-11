@@ -1,7 +1,7 @@
 ---
 name: weclapp-warehouse-logistics
 description: "Use for weclapp warehouse work with no business partner involved — free stock corrections (Lagerkorrektur) for found stock, shrinkage, stocktaking differences and scrapping, moving stock between two storage places in the same warehouse, running a visible Transportauftrag pick/transit/put-down, and relocating stock between two different warehouses (interne Lieferung). Internal inventory movement, not a delivery from or to anyone. Triggers include Lagerkorrektur, Inventurdifferenz, Umlagerung, Lagerplatz wechseln, Transportauftrag, interne Lieferung. Not for goods receipt or shipping (fulfillment)."
-version: 0.2.11
+version: 0.2.15
 ---
 
 # Run weclapp warehouse logistics
@@ -25,6 +25,7 @@ All three operation families share one preview tool: `preview_stock_operation(op
 ## Between two warehouses (interne Lieferung)
 
 1. `preview_stock_operation` with `operation="internal_delivery"`, the source and destination warehouse, and the exact items (serial/batch identity as above). `mode=CREATE_ONLY` leaves it open for manual picking; `mode=COMPLETE_NOW` ships it immediately. Approve, then `execute_approved`.
+   If the preview answers `MandatoryCustomAttributeMissing`, the tenant requires a delivery custom field: look up its option ids with `get_reference_data` (`customAttributeDefinition`, `entity="shipment"`), ask the user which value applies, and send the delivery as the error's `example` shows (`preview_write_entity` with `entity="shipment"` and the `internalDelivery` payload). Never pick a value on your own. After creation, execution re-reads the supplied attributes before picking or shipping. If readback fails or differs, stop and inspect the existing shipment; do not recreate it or repeat the booking.
 2. After a completed run, report the `destination_state`: `AUTO_BOOKED` means the destination stock posted automatically — the move is done. `OPEN_INCOMING_GOODS` means a receipt was created but not booked — point the user at completing that exact receipt, do not start a new one. `NO_INCOMING_GOODS` means the destination warehouse expects a manual booking on physical arrival. Never tell the user the relocation is complete just because the shipment reached `SHIPPED`.
 
 ## Safe write contract

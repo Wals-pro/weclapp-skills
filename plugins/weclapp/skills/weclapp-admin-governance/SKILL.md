@@ -1,7 +1,7 @@
 ---
 name: weclapp-admin-governance
 description: "Use for administering the wals.pro AI workspace itself — authoring and maintaining tenant workflow rules (SOPs) that steer how the assistant works, reviewing permissions, and answering governance questions from the activity history. Admin-level configuration, not business data. Triggers include Hausregeln, SOP anlegen, Arbeitsanweisung, Berechtigungen prüfen, wer hat was geändert. Not for business rules research without changing them (research) or connection problems (get-started)."
-version: 0.3.7
+version: 0.3.8
 ---
 
 # Govern the AI workspace
@@ -30,7 +30,8 @@ SOPs steer the assistant but never weaken safety: no SOP can remove previews, ap
 
 ## Governance questions
 
-- `tenant_health_check(include_permissions=True)` answers who can do what — role, plan, the three user-policy axes (read+preview switch, per-action write allowlist, entity scopes), and the connected weclapp user's own permissions. Use it for "why can't user X do Y" before speculating.
+- `tenant_health_check(include_permissions=True)` answers who can do what — role, plan, the rights the role grants (read+preview switch, per-action write allowlist, write areas), and the connected weclapp user's own permissions. Use it for "why can't user X do Y" before speculating.
+- Every person has exactly one role: the system roles Viewer, Editor and Administrator, seven area templates (customers & contacts, sales, accounting, articles & stock, purchasing, shipping & production, service — read everywhere, write in the own area), or a custom role copied from one of them. Financial lifecycle actions (cancellations, payment application, open-item status, purchase-invoice corrections) need a role with that right — the Accounting template and Administrators have it. Roles, assignments and personal weclapp keys are managed by admins on the dashboard (Roles page, member page with the effective rights and the reason for every restriction); the assistant explains, it does not change them. Every member may set their own key; only admins remove keys.
 - `read_activity_log` answers "who changed what, when" for audit-style questions. Report events neutrally with their timestamps; interpretation stays clearly labeled as yours.
 - "Can the assistant delete data?" — only after a preview and the user's explicit approval in the chat, never automatically, and every deletion is logged. House rules are deleted on the dashboard, supply sources in weclapp; production orders cannot be deleted through the assistant.
 

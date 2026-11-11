@@ -69,7 +69,7 @@ Lists whose items can be changed but whose list cannot (for example `customAttri
 
 ## A timeout is not a failure
 
-weclapp queues requests for up to about 30 seconds ([load-management.md](load-management.md)). Your read can time out while the write **commits anyway**. A 409 after a retry can mean "your first attempt worked".
+weclapp queues requests for up to about 30 seconds ([load-management.md](load-management.md); the current value in weclapp's docs, not confirmed as a fixed limit). Your read can time out while the write **commits anyway**. A 409 after a retry can mean "your first attempt worked".
 
 Procedure for any write whose repetition would hurt (create documents, book stock, ship, charge):
 

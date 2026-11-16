@@ -1,7 +1,8 @@
 ---
 name: weclapp-research
 description: "Use when you need to understand weclapp before acting on it — which entity or field models a concept, what a writable payload must look like, which computed read-only fields (e.g. inventory value / cost) exist, which statuses and reference values exist, how the tenant is configured, or which business rules (SOPs) apply. Evidence-based API, schema, and configuration research, not data lookup. Triggers include welches Feld, welche Entität, Payload-Aufbau, Statuswerte, Referenzdaten, Mandanten-Einstellungen. Not for connection or permission problems (get-started) or for looking up tenant records (business-insights)."
-version: 0.4.8
+metadata:
+  version: "0.4.10"
 ---
 
 # Research weclapp knowledge
@@ -19,7 +20,7 @@ Work from the narrowest source to the broadest:
 3. **Tenant-specific values** → `get_reference_data` for lookups (units, currencies, tax rates, payment methods, salutations, sales channels). `reference_type="salesChannel"` maps the technical channel keys (NET1, GROSS1, …) found on party/order records to the tenant's own display names. For sales work, `get_reference_data(reference_type="salesBundle")` returns the whole set in one call.
 4. **Tenant configuration** → `read_settings` without `domain_key` lists the catalog of readable settings domains; with a `domain_key` it reads that domain's current values (secret fields stay masked).
 5. **Tenant business rules** → `read_settings(domain_key="sops")`, narrowed if needed with `filters=[{"field": "target_entity", "value": "quotation"}]` like every settings domain. These are the customer's own standard operating procedures; operative skills must respect them.
-6. **Entity actions** → `get_entity_action_catalog` to enumerate the reviewed instance-action surface, including the domain actions of `preview_entity_action` (`createShipment`, `bookIncomingGoods`/`bookReceipt`, `accept`, `createSalesInvoice`, `createPdf`, `cancel`, `rework`, `correct`, `createPaymentApplication`, `setPaymentState`); pass `entity` plus `action` to narrow down to one action's contract — exact status requirements, payload fields, risk, and the call that runs it.
+6. **Entity actions** → `get_entity_action_catalog` to enumerate the reviewed instance-action surface, including the domain actions of `preview_entity_action` (`createShipment`, `bookIncomingGoods`/`bookReceipt`, `accept`, `createSalesInvoice`, `createPdf`, `cancel`, `rework`, `correct`, `createPaymentApplication`, `setPaymentState`); provide `entity` and `action` to narrow down to one action's contract — exact status requirements, payload fields, risk, and the call that runs it.
 
 ## Answer discipline
 

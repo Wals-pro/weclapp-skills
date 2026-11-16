@@ -1,7 +1,8 @@
 ---
 name: weclapp-service-tickets
 description: "Use for service-desk work on weclapp tickets — triaging open tickets, assembling the customer context behind a case, updating ticket status and assignment, replying via comments, checking ticket quality, and creating follow-up tasks. The support process from intake to resolution. Triggers include Ticket, Support-Anfrage, Service-Fall, Ticket zuweisen, Ticket beantworten, Ticketstatus. Not for general task lists (task-management) or booking time on a ticket (time-tracking)."
-version: 0.3.5
+metadata:
+  version: "0.3.6"
 ---
 
 # Work weclapp service tickets

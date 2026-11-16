@@ -1,7 +1,8 @@
 ---
 name: weclapp-sales-operations
 description: "Use for weclapp sales — customers, leads, CRM activities and campaigns, quotations, linking an opportunity to its quotation, accepting quotations into orders, invoices (finalizing and booking after review) and document PDFs. Every write needs preview and approval. Triggers include Angebot schreiben, Angebot annehmen, Chance mit Angebot verknüpfen, Auftrag anlegen, Rechnung erstellen, Rechnung buchen, Lead, Kampagne. Not recurring contract billing (contract-management) or shipping (fulfillment)."
-version: 0.3.14
+metadata:
+  version: "0.3.15"
 ---
 
 # Run the weclapp sales process

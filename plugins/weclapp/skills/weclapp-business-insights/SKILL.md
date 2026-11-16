@@ -1,7 +1,8 @@
 ---
 name: weclapp-business-insights
 description: "Use when answering questions from live weclapp ERP data — finding records, building a customer or record 360° view, aggregating numbers, or explaining what is open, overdue, or unusual. Read-only analysis of tenant data such as customers, orders, invoices, articles, and tickets. Triggers include Kunde 360, Umsatz, offene Rechnungen, überfällig, Auswertung, \"wie viele\", \"zeig mir\". Not for data-quality audits (data-quality) or for changing records (the matching write skill)."
-version: 0.3.12
+metadata:
+  version: "0.3.13"
 ---
 
 # Business insights from weclapp

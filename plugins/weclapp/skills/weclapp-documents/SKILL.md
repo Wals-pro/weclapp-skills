@@ -1,7 +1,8 @@
 ---
 name: weclapp-documents
 description: "Use for file attachments on weclapp records — finding documents attached to a customer, order, invoice, or ticket, downloading them, and uploading new attachments to the right record. Document handling around ERP records. Triggers include Anhang, Dokument hochladen, Datei an Auftrag/Rechnung/Ticket, PDF herunterladen, Belegablage. Not for generating document PDFs of quotations, orders, or invoices (sales-operations) or for article images (master-data)."
-version: 0.3.8
+metadata:
+  version: "0.3.9"
 ---
 
 # Handle documents on weclapp records

@@ -1,7 +1,8 @@
 ---
 name: weclapp-task-management
 description: "Use for daily task and collaboration work in weclapp — finding open or overdue tasks, creating single tasks or whole batches (from a meeting, a plan, or a checklist), changing several existing tasks at once, commenting on records, checking task quality, and reviewing what recently happened via the activity history. Triggers include Aufgabe anlegen, Aufgaben gesammelt ändern, offene Aufgaben, überfällige Aufgaben, Kommentar schreiben, was ist passiert. Not for service tickets (service-tickets) or time bookings (time-tracking)."
-version: 0.2.11
+metadata:
+  version: "0.2.12"
 ---
 
 # Manage tasks and collaboration

@@ -1,7 +1,8 @@
 ---
 name: weclapp-time-tracking
 description: "Use when booking or evaluating working time in weclapp (Zeiterfassung) — recording hours on tickets, project tasks, or service quotas, and answering questions like how much time was booked on a project, customer, or period. Triggers include Zeit buchen, Stunden erfassen, Zeitbuchung, Arbeitszeit auswerten, Stundenkontingent. Not for managing the tickets or tasks themselves (service-tickets, task-management)."
-version: 0.3.8
+metadata:
+  version: "0.3.9"
 ---
 
 # Book and evaluate time

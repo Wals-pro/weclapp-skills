@@ -2,7 +2,7 @@
 name: weclapp-sales-operations
 description: "Use for weclapp sales — customers, leads, CRM activities and campaigns, quotations, linking an opportunity to its quotation, accepting quotations into orders, invoices (finalizing and booking after review) and document PDFs. Every write needs preview and approval. Triggers include Angebot schreiben, Angebot annehmen, Chance mit Angebot verknüpfen, Auftrag anlegen, Rechnung erstellen, Rechnung buchen, Lead, Kampagne. Not recurring contract billing (contract-management) or shipping (fulfillment)."
 metadata:
-  version: "0.3.15"
+  version: "0.3.16"
 ---
 
 # Run the weclapp sales process
@@ -147,7 +147,12 @@ via `preview_write_entity` → `execute_approved`; weclapp deactivates the other
 one. `quotationVersion` itself is never writable.
 
 The quotation does not link the printed contact person directly. That name
-lives in `recordAddress`; To/CC/BCC live in `recordEmailAddresses`. On create, a
+lives in `recordAddress`; To/CC/BCC live in `recordEmailAddresses`. Recipients
+for the follow-up delivery note, invoice and order sit in
+`deliveryEmailAddresses`, `salesInvoiceEmailAddresses` and
+`salesOrderEmailAddresses` (`null` clears a block on update). A differing
+`deliveryAddress` or `invoiceAddress` cannot be removed with `null`; overwrite it
+with the target address instead (optional subfields can be cleared with `null`). On create, a
 structured first/last name may resolve implicitly to exactly one PERSON party
 listed by `customer.contacts[].id`. For an existing OPEN quotation, call
 `preview_write_entity` with `entity="quotation"`, its `entity_id`, an empty or

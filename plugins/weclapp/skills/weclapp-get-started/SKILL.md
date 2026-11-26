@@ -2,7 +2,7 @@
 name: weclapp-get-started
 description: "Use when connecting an AI assistant to weclapp via the wals.pro AI MCP server for the first time, when checking what the connection can do, or when diagnosing missing tools, permission errors, plan limits, or connection problems. Covers setup verification, a first successful read, troubleshooting, and safe escalation to support. Triggers include Verbindung einrichten, verbinden, Live- oder Demosystem, funktioniert nicht, Werkzeug fehlt, keine Berechtigung, Tariflimit, Support kontaktieren. Not for understanding entities, fields, or payloads (research)."
 metadata:
-  version: "0.4.4"
+  version: "0.4.5"
 ---
 
 # Get started with weclapp
@@ -44,7 +44,7 @@ Run one small, safe read so the user sees the connection working end to end:
 
 Access is no longer granted per tool. A user policy has three axes:
 
-- **Read axis** — one switch covering every read tool AND every write preview. Viewers can preview; previews never mutate and count against the read quota, not the write quota.
+- **Read axis** — one switch covering every read tool AND every write preview. Viewers can preview; previews never mutate and are not metered. Only queries (reads) count against the monthly pool; there is no write quota.
 - **Write axis** — an allowlist of semantic write *actions* (for example `write_entity`, `apply_payment`, `ship_goods`). Executing any approved write goes through the single `execute_approved` tool, which enforces the action allowlist.
 - **Entity scopes** — optional per-entity restrictions that intersect with both axes.
 

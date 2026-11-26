@@ -2,7 +2,7 @@
 name: weclapp-time-tracking
 description: "Use when booking or evaluating working time in weclapp (Zeiterfassung) — recording hours on tickets, project tasks, or service quotas, and answering questions like how much time was booked on a project, customer, or period. Triggers include Zeit buchen, Stunden erfassen, Zeitbuchung, Arbeitszeit auswerten, Stundenkontingent. Not for managing the tickets or tasks themselves (service-tickets, task-management)."
 metadata:
-  version: "0.3.9"
+  version: "0.3.10"
 ---
 
 # Book and evaluate time
@@ -55,6 +55,11 @@ Follow these by default; each has a reason, so adapt only when the reason does n
 6. **Separate your sources.** Distinguish tenant data, weclapp documentation or schema knowledge, and your own conclusions, so the user can tell a fact from an inference.
 7. **Show changes and side effects up front.** Explain what will change, what stays untouched, and any downstream effects before previewing.
 8. **Verify afterwards.** Re-read the changed record and confirm it matches the approved preview — the preview shows intent, the re-read shows the result.
+
+## Attendance & absence types
+
+- **Attendance records (`attendance`):** Create and update attendance entries (`employeeId`, `startTime`, `endTime`, `breaks`) through `preview_write_entity` → `execute_approved`. Updating `breaks` runs isolated with required `version` and preserves existing breaks automatically.
+- **Absence types (`absenceType`):** Create and update absence types (with all required flags and color) through `preview_write_entity` → `execute_approved`, and inspect existing types via `get_reference_data(reference_type="absenceType")`. Preview warns when changing leave entitlement or work-time-tracking rules; deleting `attendance` or `absenceType` stays disabled here.
 
 ## Scope
 

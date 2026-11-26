@@ -2,7 +2,7 @@
 name: weclapp-service-tickets
 description: "Use for service-desk work on weclapp tickets — triaging open tickets, assembling the customer context behind a case, updating ticket status and assignment, replying via comments, checking ticket quality, and creating follow-up tasks. The support process from intake to resolution. Triggers include Ticket, Support-Anfrage, Service-Fall, Ticket zuweisen, Ticket beantworten, Ticketstatus. Not for general task lists (task-management) or booking time on a ticket (time-tracking)."
 metadata:
-  version: "0.3.6"
+  version: "0.3.7"
 ---
 
 # Work weclapp service tickets
@@ -30,8 +30,8 @@ For the specific inconsistent-CC validation failure, follow the server's diagnos
 
 - **Status, assignment, priority, fields:** `preview_write_entity` (entity `ticket`) → approval → `execute_approved`. Update only the fields that change. CC recipients for the ticket correspondence live in `ccEmailAddresses` as one string holding the whole list; weclapp stores the separator verbatim and takes both `;` and `,`, and tickets created from mail usually carry `;` — keep the separator the ticket already uses instead of reformatting it, because that string is live mail routing.
 - **Custom fields on a ticket (Zusatzfelder):** `preview_write_entity` with a payload of only `customAttributes` and/or `items` (`version` optional), entries `{attribute_definition_id | attribute_key, value | clear}` → approval bound to the `write_custom_attributes` action → `execute_approved`; read them first with `get_entity(view="custom_attributes")`. Empty mandatory custom fields block every ticket update until they are filled in the same preview.
-- **Replies and internal notes:** `preview_write_comment` → approval → `execute_approved` on the ticket. Choose `visibility="internal"` for team-visible notes, `"private"` for author-private notes, or `"public"` for customer-visible replies that can trigger email. Legacy `private=true` is author-private, not a team note. Write customer text in the tenant's language and tone.
-- **Correct existing visibility:** Pass the exact `comment_id`, ticket scope and `visibility="internal"` or `"private"`; omit text and solution to preserve them. Execute the exact approval envelope, then read back the same comment ID and visibility. Stale versions require a fresh preview. Public conversion without sending mail is not verified/supported; never substitute a duplicate public reply.
+- **Replies and internal notes:** `preview_write_comment` → approval → `execute_approved` on the ticket. Choose `visibility="internal"` for team-visible notes (supported on `ticket` only), `"private"` for author-private notes, or `"public"` for customer-visible replies that can trigger email. Legacy `private=true` is author-private, not a team note. Write customer text in the tenant's language and tone.
+- **Edit existing top-level comment:** Pass the exact `comment_id`, ticket scope, and updated `text` (plain, Markdown, or allowlisted HTML) and/or `visibility` (`"internal"` or `"private"`); omit `solution`. Execute the exact approval envelope, then read back the same comment ID, body, version, and visibility via `search_comments`. Stale versions require a fresh preview. Editing already-public comments, replies, or converting to `"public"` without sending mail is not supported; never substitute a duplicate comment.
 - **Follow-ups:** `preview_write_entity` (entity `task`) → approval → `execute_approved`, linked to the ticket, with owner and due date.
 - **Time on the ticket:** hand over to the time-tracking skill — bookings need the correct billing target, which that skill resolves.
 

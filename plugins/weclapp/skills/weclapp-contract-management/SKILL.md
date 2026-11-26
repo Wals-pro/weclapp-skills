@@ -2,7 +2,7 @@
 name: weclapp-contract-management
 description: "Use for weclapp contracts and recurring billing (Verträge) — creating or updating contracts, managing contract positions and billing intervals, checking runtimes and cancellation dates, and answering what a customer's contracts cover and cost. Triggers include Vertrag anlegen, Vertragsposition, Abrechnungsintervall, Laufzeit, Kündigungsfrist, wiederkehrende Rechnung. Not for one-off quotations, orders, or invoices (sales-operations)."
 metadata:
-  version: "0.2.16"
+  version: "0.2.17"
 ---
 
 # Manage weclapp contracts
@@ -30,6 +30,7 @@ After every write, re-read the contract and confirm positions, intervals, and da
 
 - Read the exact current contract and position IDs/versions first. Existing DRAFT and ACTIVE contracts support sparse position revisions; unchanged positions are preserved. Keep existing billing flags, taxes and intervals unless that exact change was requested.
 - Revise one position array per approval; period changes and additions within that array can share a preview. Header changes need a separate approval and fresh version. New positions have no existing ID. Removing positions requires explicit consent and is limited to unbilled draft rows in the primary array; removal from the separate cost array remains blocked.
+- `nextContractBillingDate` is read-only in weclapp and cancelling a contract invoice does not reset it. To reset or backdate billing after a cancellation, explicitly set or clear `previousContractBillingDate` on the existing `contractItems` position of an ACTIVE contract (`contractCostItems`, DRAFT contracts, creates, and new positions do not support it; setting an ACTIVE contract back to DRAFT is blocked, because billed positions would lose their removal protection). Never send `previousContractBillingDate` on routine updates unless the user explicitly wants to change or clear it — omitting it preserves the existing billing history. Before approval, show the old/new dates and explain that weclapp recalculates `nextContractBillingDate` automatically and re-opens the period for future billing/SEPA runs.
 - Choose the array from the current record and payload guide, not from the word “cost”: the primary contract positions can represent either costs or revenue. Preserve existing types, taxes and manual flags; set the intended cost type explicitly on new cost positions. Exception: a primary position that takes its price from the article keeps that price even after the article price changes; to give it a new price, switch it to a manual price together with the new price in one revision, and show the old and new price per position before approval. Sparse existing-row updates need not repeat their tax reference. The separate cost array on sales contracts has a different schema without that tax reference; this never permits tax writes on invoices or other entities.
 
 
